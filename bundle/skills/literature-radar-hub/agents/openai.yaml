@@ -1,0 +1,7 @@
+interface:
+  display_name: "Literature Radar Hub"
+  short_description: "Switch between MRI dashboards and weekly Gmail reports"
+  # //============XJQ(default report configuration prompt: collect six fields before mode execution)====================//
+  default_prompt: |
+    Use $literature-radar-hub for a Chinese MRI dashboard or a weekly-email literature report. Before execution, if any report configuration is missing, show “日报配置：” and ask for: 邮箱、时区、日期、来源、关键词、输出目录. Give these MRI references: 日期 2026-01-01 至运行日; 来源 PubMed、Crossref、OpenAlex、arXiv、Nature、Science, plus MRM、NeuroImage、TMI、MIA、Radiology、Medical Physics、npj Digital Medicine for visualizer; 关键词 MRI、AI、ASL、BBB、VASO、PVS、LIVER、diffusion-prepared、Hemodynamics、neuroimaging. The user must supply email, timezone, and output directory; preserve configured values and never infer credentials.
+  # //================XJQ(default report configuration prompt: collect six fields before mode execution END===============//

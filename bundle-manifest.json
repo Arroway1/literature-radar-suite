@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "suite_name": "literature-radar-suite",
+  "suite_version": "0.1.0",
+  "bundle_root": "bundle/skills",
+  "target_root": "<CodexHome>/skills",
+  "update_policy": "bundle_release",
+  "agent_compatibility": {
+    "portable_contract": "Each included component is an independent Skill directory with a SKILL.md file.",
+    "adapters": {
+      "Codex": {
+        "install_root": "<CodexHome>/skills",
+        "installer": "scripts/install_literature_radar_suite.ps1",
+        "updater": "scripts/update_literature_radar_suite.ps1"
+      }
+    },
+    "other_agents": {
+      "install_root": "Provide the target Agent's Skill/rules directory with -TargetSkillsRoot.",
+      "reload": "Use the target Agent's documented reload or new-session action.",
+      "without_skill_md": "Convert each SKILL.md to the target Agent's plugin, rule, or workflow format; direct installation is not guaranteed."
+    },
+    "runtime_integrations": "Gmail connector/MCP, Zotero APIs, browser sessions, credentials, and user configuration are per-Agent/per-user and are never copied."
+  },
+  "included": [
+    {
+      "name": "literature-radar-hub",
+      "path": "bundle/skills/literature-radar-hub",
+      "required_for": ["visualizer", "weekly-email"],
+      "source": {"type": "local_snapshot", "installed_path": "<CodexHome>/skills/literature-radar-hub"}
+    },
+    {
+      "name": "nature-academic-search",
+      "path": "bundle/skills/nature-academic-search",
+      "required_for": ["visualizer", "weekly-email"],
+      "source": {"type": "local_snapshot", "installed_path": "<CodexHome>/skills/nature-academic-search"}
+    },
+    {
+      "name": "zotero-literature-visualizer",
+      "path": "bundle/skills/zotero-literature-visualizer",
+      "required_for": ["visualizer"],
+      "source": {"type": "local_snapshot", "installed_path": "<CodexHome>/skills/zotero-literature-visualizer"}
+    },
+    {
+      "name": "daily-literature-digest",
+      "path": "bundle/skills/daily-literature-digest",
+      "required_for": ["weekly-email"],
+      "source": {"type": "local_snapshot", "installed_path": "<CodexHome>/skills/daily-literature-digest"}
+    },
+    {
+      "name": "paper-vault",
+      "path": "bundle/skills/paper-vault",
+      "required_for": [],
+      "optional_for": ["visualizer", "weekly-email", "paper-vault"],
+      "source": {"type": "local_snapshot", "installed_path": "<CodexHome>/skills/paper-vault"}
+    },
+    {
+      "name": "paper-close-reading",
+      "path": "bundle/skills/paper-close-reading",
+      "required_for": [],
+      "optional_for": ["paper-close-reading"],
+      "source": {"type": "local_snapshot", "installed_path": "<CodexHome>/skills/paper-close-reading"}
+    }
+  ],
+  "optional_missing": [
+    {
+      "name": "sciencedirect-live-session-fetcher",
+      "status": "not-installed",
+      "optional_for": ["visualizer", "weekly-email"],
+      "fallback": "Use zotero-literature-visualizer/scripts/browser_pdf_downloader.py for an authorized visible browser flow."
+    }
+  ],
+  "excluded_runtime_state": [
+    "daily-literature-digest.config.json",
+    "PDF files",
+    "Paper Vault data",
+    "browser profiles",
+    "passwords",
+    "tokens",
+    "cookies",
+    "Gmail connector/MCP authorization"
+  ]
+}
