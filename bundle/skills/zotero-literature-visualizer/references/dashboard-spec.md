@@ -46,6 +46,24 @@ The build command writes:
 - `literature-dashboard-details.js`
 - `literature-dashboard-pdf-open.html`
 
+Add `--inline` to also embed the data and details inside
+`literature-dashboard.html`, producing a single file the user can send to a
+supervisor or group chat. The external `.js` files are still written for the
+PDF launcher page; local PDF links only resolve on the user's own machine.
+
+The build also maintains `metadata/dashboard-snapshot.json` (NEW-paper delta
+baseline) and, when papers changed since the last build, writes
+`update-digest.md`. Use `--no-snapshot` for smoke builds.
+
+## Optional papers.json fields the dashboard understands
+
+- `cas_partition` ("1"-"4") and `cas_top` (bool): 中科院分区 badges.
+- `cited_by_count` and `in_set_cited` (ints): citation badges, the 被引 sort,
+  and the core must-reads list. Normally merged in by
+  `scripts/citation_network.py`, which also writes
+  `metadata/citation-network.json` (edges) that the build embeds
+  automatically when present.
+
 ## Spec Schema
 
 ```json
@@ -119,6 +137,11 @@ The build command writes:
 - Keep `theme_definitions[*].name`, `method_definitions[*].name`, and every
   `paper_assignments` value exactly identical; the dashboard uses these strings
   as keys.
+- Keep the auto-assigned `color` values from `init-spec` unless the user asks
+  for custom colors. The bundled palette hexes are colorblind-validated and are
+  remapped at runtime to light/dark theme variables; a custom hex is used
+  verbatim in both modes, so pick one that stays readable on light and dark
+  backgrounds.
 - Preserve original English paper titles, journal names, DOI URLs, and official
   journal URLs in the paper metadata.
 - Keep paper-card filters theme-only: `All` plus primary themes. Method families

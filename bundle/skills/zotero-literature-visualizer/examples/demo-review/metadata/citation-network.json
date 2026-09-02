@@ -1,0 +1,256 @@
+{
+  "generated_at": "2026-08-21T18:47:56",
+  "source": "synthetic demo edges",
+  "coverage": {
+    "papers": 21,
+    "with_doi": 21,
+    "matched": 21
+  },
+  "nodes": [
+    {
+      "rank": "1",
+      "doi": "10.1016/j.demo.2026.000001",
+      "openalex_id": "W1",
+      "cited_by_count": 39,
+      "in_set_cited": 6
+    },
+    {
+      "rank": "2",
+      "doi": "10.1016/j.demo.2026.000002",
+      "openalex_id": "W2",
+      "cited_by_count": 50,
+      "in_set_cited": 4
+    },
+    {
+      "rank": "3",
+      "doi": "10.1016/j.demo.2026.000003",
+      "openalex_id": "W3",
+      "cited_by_count": 22,
+      "in_set_cited": 1
+    },
+    {
+      "rank": "4",
+      "doi": "10.1016/j.demo.2026.000004",
+      "openalex_id": "W4",
+      "cited_by_count": 44,
+      "in_set_cited": 3
+    },
+    {
+      "rank": "5",
+      "doi": "10.1016/j.demo.2026.000005",
+      "openalex_id": "W5",
+      "cited_by_count": 23,
+      "in_set_cited": 0
+    },
+    {
+      "rank": "6",
+      "doi": "10.1016/j.demo.2026.000006",
+      "openalex_id": "W6",
+      "cited_by_count": 7,
+      "in_set_cited": 1
+    },
+    {
+      "rank": "7",
+      "doi": "10.1016/j.demo.2026.000007",
+      "openalex_id": "W7",
+      "cited_by_count": 26,
+      "in_set_cited": 2
+    },
+    {
+      "rank": "8",
+      "doi": "10.1016/j.demo.2026.000008",
+      "openalex_id": "W8",
+      "cited_by_count": 23,
+      "in_set_cited": 1
+    },
+    {
+      "rank": "9",
+      "doi": "10.1016/j.demo.2026.000009",
+      "openalex_id": "W9",
+      "cited_by_count": 21,
+      "in_set_cited": 2
+    },
+    {
+      "rank": "10",
+      "doi": "10.1016/j.demo.2026.000010",
+      "openalex_id": "W10",
+      "cited_by_count": 34,
+      "in_set_cited": 1
+    },
+    {
+      "rank": "11",
+      "doi": "10.1016/j.demo.2026.000011",
+      "openalex_id": "W11",
+      "cited_by_count": 2,
+      "in_set_cited": 0
+    },
+    {
+      "rank": "12",
+      "doi": "10.1016/j.demo.2026.000012",
+      "openalex_id": "W12",
+      "cited_by_count": 2,
+      "in_set_cited": 0
+    },
+    {
+      "rank": "13",
+      "doi": "10.1016/j.demo.2026.000013",
+      "openalex_id": "W13",
+      "cited_by_count": 2,
+      "in_set_cited": 0
+    },
+    {
+      "rank": "14",
+      "doi": "10.1016/j.demo.2026.000014",
+      "openalex_id": "W14",
+      "cited_by_count": 36,
+      "in_set_cited": 1
+    },
+    {
+      "rank": "15",
+      "doi": "10.1016/j.demo.2026.000015",
+      "openalex_id": "W15",
+      "cited_by_count": 17,
+      "in_set_cited": 1
+    },
+    {
+      "rank": "16",
+      "doi": "10.1016/j.demo.2026.000016",
+      "openalex_id": "W16",
+      "cited_by_count": 34,
+      "in_set_cited": 1
+    },
+    {
+      "rank": "17",
+      "doi": "10.1016/j.demo.2026.000017",
+      "openalex_id": "W17",
+      "cited_by_count": 7,
+      "in_set_cited": 0
+    },
+    {
+      "rank": "18",
+      "doi": "10.1016/j.demo.2026.000018",
+      "openalex_id": "W18",
+      "cited_by_count": 19,
+      "in_set_cited": 0
+    },
+    {
+      "rank": "19",
+      "doi": "10.1016/j.demo.2026.000019",
+      "openalex_id": "W19",
+      "cited_by_count": 19,
+      "in_set_cited": 0
+    },
+    {
+      "rank": "20",
+      "doi": "10.1016/j.demo.2026.000020",
+      "openalex_id": "W20",
+      "cited_by_count": 13,
+      "in_set_cited": 0
+    },
+    {
+      "rank": "21",
+      "doi": "10.1016/j.demo.2026.000021",
+      "openalex_id": "W21",
+      "cited_by_count": 18,
+      "in_set_cited": 0
+    }
+  ],
+  "edges": [
+    {
+      "source": "3",
+      "target": "2"
+    },
+    {
+      "source": "3",
+      "target": "1"
+    },
+    {
+      "source": "4",
+      "target": "1"
+    },
+    {
+      "source": "4",
+      "target": "3"
+    },
+    {
+      "source": "5",
+      "target": "4"
+    },
+    {
+      "source": "5",
+      "target": "1"
+    },
+    {
+      "source": "6",
+      "target": "2"
+    },
+    {
+      "source": "7",
+      "target": "4"
+    },
+    {
+      "source": "7",
+      "target": "2"
+    },
+    {
+      "source": "7",
+      "target": "1"
+    },
+    {
+      "source": "8",
+      "target": "7"
+    },
+    {
+      "source": "9",
+      "target": "2"
+    },
+    {
+      "source": "9",
+      "target": "1"
+    },
+    {
+      "source": "10",
+      "target": "9"
+    },
+    {
+      "source": "10",
+      "target": "1"
+    },
+    {
+      "source": "14",
+      "target": "8"
+    },
+    {
+      "source": "15",
+      "target": "4"
+    },
+    {
+      "source": "16",
+      "target": "15"
+    },
+    {
+      "source": "17",
+      "target": "6"
+    },
+    {
+      "source": "17",
+      "target": "7"
+    },
+    {
+      "source": "19",
+      "target": "9"
+    },
+    {
+      "source": "20",
+      "target": "10"
+    },
+    {
+      "source": "20",
+      "target": "14"
+    },
+    {
+      "source": "20",
+      "target": "16"
+    }
+  ]
+}

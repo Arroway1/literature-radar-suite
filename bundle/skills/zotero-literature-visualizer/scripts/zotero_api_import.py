@@ -10,10 +10,13 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime as dt
 import hashlib
+import html as html_module
 import json
 import mimetypes
 import os
+import re
 import sys
 import time
 import uuid
@@ -390,6 +393,205 @@ def upload_attachment_file(key: str, user_id: str, attachment_key: str, path: Pa
     return "uploaded"
 
 
+# ---------------------------------------------------------------------------
+# Dashboard write-back: sync themes/methods, reading status, stars, and notes
+# from the dashboard's zotero-writeback.json into Zotero tags and child notes.
+# ---------------------------------------------------------------------------
+
+NOTE_MARKER = "[SLR-Dashboard-Note]"
+STATUS_TAG_LABELS = {"read": "已读", "reading": "在读"}
+
+
+def normalize_title_key(text: Any) -> str:
+    return re.sub(r"[^a-z0-9一-鿿]+", "", str(text or "").lower())[:120]
+
+
+def get_item(key: str, user_id: str, item_key: str) -> dict[str, Any]:
+    data, _ = api_json("GET", f"{API_ROOT}/users/{user_id}/items/{item_key}", key)
+    return (data or {}).get("data") or {}
+
+
+def find_item_by_title(key: str, user_id: str, title: str) -> str | None:
+    query = str(title or "").strip()
+    if len(query) < 8:
+        return None
+    q = parse.urlencode({"q": query[:60], "qmode": "titleCreatorYear", "format": "json", "limit": "25"})
+    data, _ = api_json("GET", f"{API_ROOT}/users/{user_id}/items?{q}", key)
+    wanted = normalize_title_key(title)
+    for item in data or []:
+        item_data = item.get("data") or {}
+        if item_data.get("itemType") in {"attachment", "note"}:
+            continue
+        if normalize_title_key(item_data.get("title")) == wanted:
+            return item_data.get("key")
+    return None
+
+
+def managed_tags(entry: dict[str, Any], prefix: str) -> list[str]:
+    tags: list[str] = []
+    if str(entry.get("theme") or "").strip():
+        tags.append(f"{prefix}:主题:{str(entry['theme']).strip()}")
+    if str(entry.get("subtheme") or "").strip():
+        tags.append(f"{prefix}:子主题:{str(entry['subtheme']).strip()}")
+    if str(entry.get("method") or "").strip():
+        tags.append(f"{prefix}:方法:{str(entry['method']).strip()}")
+    status = str(entry.get("read_status") or "").strip()
+    if status in STATUS_TAG_LABELS:
+        tags.append(f"{prefix}:{STATUS_TAG_LABELS[status]}")
+    if entry.get("starred"):
+        tags.append(f"{prefix}:⭐星标")
+    return tags
+
+
+def patch_item(key: str, user_id: str, item_key: str, version: int, payload: dict[str, Any]) -> None:
+    api_request(
+        "PATCH",
+        f"{API_ROOT}/users/{user_id}/items/{item_key}",
+        key=key,
+        payload=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        content_type="application/json",
+        headers={"If-Unmodified-Since-Version": str(version)},
+    )
+
+
+def sync_item_tags(key: str, user_id: str, item_key: str, entry: dict[str, Any], prefix: str) -> str:
+    item_data = get_item(key, user_id, item_key)
+    version = item_data.get("version")
+    if not version:
+        return "no-version"
+    existing = item_data.get("tags") or []
+    kept = [tag for tag in existing if not str((tag or {}).get("tag") or "").startswith(f"{prefix}:")]
+    wanted = managed_tags(entry, prefix)
+    merged = kept + [{"tag": tag} for tag in wanted]
+    current_names = sorted(str((tag or {}).get("tag") or "") for tag in existing)
+    merged_names = sorted(str((tag or {}).get("tag") or "") for tag in merged)
+    if current_names == merged_names:
+        return "unchanged"
+    patch_item(key, user_id, item_key, int(version), {"tags": merged})
+    return "updated"
+
+
+def dashboard_note_html(entry: dict[str, Any], dashboard_title: str) -> str:
+    note = str(entry.get("note") or "").strip()
+    body = html_module.escape(note).replace("\n", "<br>")
+    stamp = dt.date.today().isoformat()
+    source = html_module.escape(dashboard_title or "literature dashboard")
+    return (
+        f"<p><b>{NOTE_MARKER} 我的文献笔记 / My dashboard note</b></p>"
+        f"<p><i>同步于 {stamp} · {source} · zotero-literature-visualizer</i></p>"
+        f"<p>{body}</p>"
+    )
+
+
+def upsert_dashboard_note(key: str, user_id: str, parent_key: str, note_html: str, prefix: str) -> str:
+    query = parse.urlencode({"format": "json", "limit": "100"})
+    data, _ = api_json("GET", f"{API_ROOT}/users/{user_id}/items/{parent_key}/children?{query}", key)
+    for child in data or []:
+        child_data = child.get("data") or {}
+        if child_data.get("itemType") != "note":
+            continue
+        if NOTE_MARKER not in str(child_data.get("note") or ""):
+            continue
+        if str(child_data.get("note") or "") == note_html:
+            return "note-unchanged"
+        patch_item(key, user_id, child_data.get("key"), int(child_data.get("version") or 0), {"note": note_html})
+        return "note-updated"
+    payload = [{
+        "itemType": "note",
+        "parentItem": parent_key,
+        "note": note_html,
+        "tags": [{"tag": f"{prefix}:笔记"}],
+    }]
+    result, _ = api_json(
+        "POST",
+        f"{API_ROOT}/users/{user_id}/items",
+        key,
+        payload,
+        headers={"Zotero-Write-Token": write_token()},
+    )
+    success = result.get("success") or {}
+    if "0" not in success:
+        raise ZoteroAPIError(f"Could not create dashboard note: {result}")
+    return "note-created"
+
+
+def load_writeback(path: Path) -> tuple[str, list[dict[str, Any]]]:
+    payload = json.loads(path.read_text(encoding="utf-8-sig"))
+    entries = payload.get("entries") if isinstance(payload, dict) else payload
+    if not isinstance(entries, list):
+        raise SystemExit("Write-back file must contain an entries list (export it from the dashboard's Zotero button).")
+    title = str(payload.get("dashboard_title") or "") if isinstance(payload, dict) else ""
+    return title, [dict(entry) for entry in entries]
+
+
+def entry_is_annotated(entry: dict[str, Any]) -> bool:
+    return bool(str(entry.get("read_status") or "").strip() or entry.get("starred") or str(entry.get("note") or "").strip())
+
+
+def command_write_back(args: argparse.Namespace) -> int:
+    key = read_api_key(args.api_key_file)
+    identity = verify_key(key)
+    require_personal_write(identity)
+    dashboard_title, entries = load_writeback(Path(args.writeback).resolve())
+    if args.annotated_only:
+        entries = [entry for entry in entries if entry_is_annotated(entry)]
+    print(f"Write-back entries to process: {len(entries)} (annotated-only={bool(args.annotated_only)}, dry-run={bool(args.dry_run)})")
+    results: list[dict[str, Any]] = []
+    for index, entry in enumerate(entries, start=1):
+        title = str(entry.get("title") or "").strip()
+        doi = str(entry.get("doi") or "").strip()
+        doi = re.sub(r"^https?://(dx\.)?doi\.org/", "", doi, flags=re.IGNORECASE)
+        row: dict[str, Any] = {"index": index, "rank": entry.get("rank"), "title": title, "doi": doi}
+        item_key = None
+        try:
+            if doi:
+                item_key = find_existing_by_doi(key, identity.user_id, doi)
+            if not item_key and title:
+                item_key = find_item_by_title(key, identity.user_id, title)
+            if not item_key:
+                row["status"] = "not-found"
+                results.append(row)
+                continue
+            row["item_key"] = item_key
+            if args.dry_run:
+                row["status"] = "dry-run"
+                row["tags"] = managed_tags(entry, args.tag_prefix)
+                row["note"] = "would-sync" if str(entry.get("note") or "").strip() else "none"
+                results.append(row)
+                continue
+            if not args.no_tags:
+                row["tags"] = sync_item_tags(key, identity.user_id, item_key, entry, args.tag_prefix)
+            if not args.no_notes and str(entry.get("note") or "").strip():
+                row["note"] = upsert_dashboard_note(
+                    key, identity.user_id, item_key,
+                    dashboard_note_html(entry, dashboard_title), args.tag_prefix,
+                )
+            row["status"] = "synced"
+        except ZoteroAPIError as exc:
+            row["status"] = "error"
+            row["error"] = str(exc)
+        results.append(row)
+        if index % 10 == 0:
+            print(f"  ...{index}/{len(entries)}")
+        time.sleep(args.delay)
+    output = {
+        "dashboard_title": dashboard_title,
+        "tag_prefix": args.tag_prefix,
+        "results": results,
+    }
+    if args.output:
+        Path(args.output).write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({
+        "synced": sum(1 for row in results if row.get("status") == "synced"),
+        "not_found": sum(1 for row in results if row.get("status") == "not-found"),
+        "dry_run": sum(1 for row in results if row.get("status") == "dry-run"),
+        "errors": sum(1 for row in results if row.get("status") == "error"),
+        "tags_updated": sum(1 for row in results if row.get("tags") == "updated"),
+        "notes_written": sum(1 for row in results if str(row.get("note") or "").startswith("note-")),
+    }, ensure_ascii=False, indent=2))
+    return 0
+
+
 def command_verify(args: argparse.Namespace) -> int:
     key = read_api_key(args.api_key_file)
     identity = verify_key(key)
@@ -524,6 +726,17 @@ def build_parser() -> argparse.ArgumentParser:
     imp.add_argument("--delay", type=float, default=0.2, help="Delay between item writes, in seconds.")
     imp.add_argument("--output", help="Optional JSON log path.")
     imp.set_defaults(func=command_import)
+
+    back = sub.add_parser("write-back", help="Sync dashboard themes/methods, reading status, stars, and notes into Zotero tags and child notes.")
+    back.add_argument("--writeback", required=True, help="Path to zotero-writeback.json exported from the dashboard's Zotero button.")
+    back.add_argument("--tag-prefix", default="SLR", help="Managed tag namespace; existing '<prefix>:' tags are replaced on each sync (default: SLR).")
+    back.add_argument("--annotated-only", action="store_true", help="Only sync papers with a reading status, star, or note (skip classification-only rows).")
+    back.add_argument("--no-tags", action="store_true", help="Do not touch item tags.")
+    back.add_argument("--no-notes", action="store_true", help="Do not create/update dashboard child notes.")
+    back.add_argument("--dry-run", action="store_true", help="Match items and report planned changes without writing.")
+    back.add_argument("--delay", type=float, default=0.25, help="Delay between items, in seconds.")
+    back.add_argument("--output", help="Optional JSON log path.")
+    back.set_defaults(func=command_write_back)
     return parser
 
 

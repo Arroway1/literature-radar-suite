@@ -1,585 +1,236 @@
 ---
 name: zotero-literature-visualizer
-description: Collect, verify, download, classify, visualize, and synthesize recent high-impact academic literature from user keywords or direct Zotero PDF libraries, with a quality-first default of the best 30 papers from the last year regardless of OA status. Use when the user asks for a systematic or semi-systematic literature review, recent top papers, Zotero direct import, journal Impact Factor filtering, official journal source verification, school/library-login PDF access for non-OA papers, bilingual Chinese-English summaries, paper classification, relationship analysis, or an interactive dashboard with paper cards, category charts, method hotspots, and local PDF links.
+description: Build evidence-aware bilingual literature reviews and interactive dashboards from a local Zotero library or a new topic search. Use for Zotero PDF analysis, paper classification, bilingual research cards, journal-quality verification, citation networks, reading-state dashboards, or Zotero write-back.
 ---
 
-# Zotero Literature Visualizer / Zotero 文献整理可视化
+# Zotero Literature Visualizer
 
-## Overview
+## Purpose
 
-Use this skill to build a local literature-review library from any user-provided
-keywords. The default goal is quality-first: identify the best 30 papers from
-the last year in high-impact journals, regardless of OA status. OA availability
-must never be used as a selection or ranking criterion. The workflow verifies
-journal Impact Factor from official journal or publisher pages, prepares
-manual school/library-login access for closed papers, reads available full
-texts, writes bilingual Chinese-English synthesis, and renders an interactive
-dashboard.
+Turn either a local Zotero library or a research topic into a reproducible literature workspace containing normalized metadata, evidence-aware paper notes, a bilingual synthesis, and an offline interactive dashboard.
 
-The bundled scripts handle deterministic metadata collection, OA PDF discovery,
-manual PDF queues, metadata export, starter dashboard specs, and dashboard
-rendering.
-Codex still performs the scholarly judgment: official IF verification,
-full-text reading, taxonomy design, bilingual paper notes, and relationship
-analysis.
+Bundled scripts perform deterministic collection, Zotero snapshot reading, metadata normalization, dashboard rendering, citation-network enrichment, and optional Zotero API writes. The agent remains responsible for scholarly judgment: relevance screening, evidence verification, full-text interpretation, taxonomy design, and paper-specific bilingual summaries.
 
-## Zotero Direct Import Mode
+## Choose the workflow
 
-Use Zotero mode when the user already has papers and PDFs in Zotero and wants a
-visual review of their own library. Do not ask the user to export BibTeX, RIS,
-CSV, or Zotero RDF unless direct reading fails.
+| User intent | Workflow | Read first |
+|---|---|---|
+| Analyze an existing Zotero library | Local Zotero mode | `references/zotero-workflows.md` |
+| Add papers, tags, notes, or reading state to Zotero | Zotero API/write-back mode | `references/zotero-workflows.md` |
+| Search and review a new topic | Discovery mode | `references/discovery-workflow.md` |
+| Verify Impact Factor or CAS partition claims | Quality evidence | `references/quality-and-evidence.md` |
+| Build or refine the interactive dashboard | Dashboard mode | `references/dashboard-workflow.md` and `references/dashboard-spec.md` |
 
-Default behavior:
+Do not combine modes automatically. In particular, do not apply the discovery workflow's journal or date defaults to a user's existing Zotero library unless requested.
 
-- Auto-discover `~/Zotero` or use `ZOTERO_DATA_DIR` / `--zotero-dir`.
-- Copy `zotero.sqlite` to a temporary snapshot before reading it, so Zotero can
-  stay open and the original database is never modified.
-- Read titles, authors, year, journal, DOI, abstract, Zotero tags,
-  collections, item type, and PDF attachment paths.
-- Include only Zotero items whose PDF attachment resolves to an existing local
-  file.
-- Skip items without local PDFs; never label them as full-text items.
-- Point `local_pdf_path` to the original Zotero PDF. Do not copy or move PDFs by
-  default.
-- Do not run OpenAlex/Crossref/Unpaywall and do not apply IF>5 filtering unless
-  the user explicitly asks for extra official IF verification.
-- For user-facing Zotero runs, omit `--limit` so each user's full local
-  PDF-backed Zotero library is imported. Use `--limit` only for smoke tests,
-  debugging, or when the user explicitly asks for a smaller subset.
-- When a Zotero run has more than 100 papers, automatically use the
-  `large-library` dashboard layout: two-level theme/subtheme taxonomy, search,
-  a compact theme tree that reveals subthemes only for the selected primary
-  theme, collapsible subtheme and year paper groups, aggregated theme-method
-  maps, and a journal browser with missing metadata separated from real journal
-  sources.
+## Non-negotiable rules
 
-Typical user request:
+### Privacy and portability
 
-```text
-Use zotero-literature-visualizer Zotero mode to read all Zotero items with local PDFs, classify them, summarize them bilingually, and generate the visualization dashboard.
-```
+- Never place names, email addresses, institutional accounts, API keys, cookies, browser profiles, Zotero databases, PDFs, or local absolute paths inside this skill or a shareable archive.
+- Keep run data outside the skill directory. Treat `examples/demo-review` as synthetic demonstration data only.
+- Read Zotero through a temporary SQLite snapshot. Never edit `zotero.sqlite` directly.
+- Read API keys only from `ZOTERO_API_KEY` or a user-supplied file outside the skill directory. Never print or commit them.
+- Do not copy or upload a user's Zotero PDFs unless the user explicitly requests an authorized import or upload workflow.
 
-Command pattern:
+### Evidence integrity
+
+- Never invent bibliographic fields, Impact Factors, CAS partitions, findings, methods, datasets, limitations, or citations.
+- Distinguish `full_text`, `abstract_only`, and `metadata_only` evidence states.
+- For a paper with a readable local PDF, derive the detailed card from the full text.
+- Without a readable PDF, summarize only the abstract and label the evidence level clearly.
+- If neither PDF text nor abstract is available, provide metadata only and state that no substantive summary was possible.
+- Do not present search snippets, inferred labels, or generic templates as paper findings.
+
+### Access and selection
+
+- Relevance and quality determine selection; open-access status must not affect ranking.
+- Analyze PDFs already available locally to the user. This skill does not claim to download subscription PDFs or control authenticated browser sessions.
+- Verify journal metrics from an official journal, publisher, Clarivate, or CAS source before displaying them as official.
+
+## Common output contract
+
+Use a run directory outside the skill, normally `<workspace>/literature-reviews/<topic-slug>/`.
+
+Expected core files:
+
+- `metadata/papers.json` and `metadata/papers.csv`: normalized paper records.
+- `texts/`: extracted PDF text when locally available.
+- `review-bilingual.md`: Chinese-English synthesis grounded in the available evidence.
+- `relationship-map.md`: theme-method relationships and research gaps.
+- `dashboard-spec.json`: editable bilingual taxonomy and paper-card semantics.
+- `<dashboard-name>.html`: offline interactive dashboard.
+
+Optional files include `metadata/citation-network.json`, `metadata/journal-if-evidence.csv`, `metadata/papers-to-zotero.json`, `update-digest.md`, and Zotero write-back logs.
+
+## Paper-card contract
+
+Each card should be paper-specific and bilingual. Include only claims supported by the available evidence:
+
+1. Research question or purpose / 研究问题或目的
+2. Method and study design / 方法与研究设计
+3. Data, sample, case, or setting / 数据、样本、案例或场景
+4. Main findings / 主要发现
+5. Limitations / 局限
+6. Relevance to the review / 与综述主题的关系
+7. Evidence level / 证据层级
+
+Do not mechanically translate the English abstract into every field. With a PDF, inspect the abstract, methods, results, discussion, and conclusion; with abstract-only evidence, use cautious language such as “the abstract reports”.
+
+## Minimal command patterns
+
+Resolve `<python>` to a real Python 3.10+ interpreter and `<skill-dir>` to this skill directory.
+
+### Local Zotero library
 
 ```powershell
 & '<python>' '<skill-dir>\scripts\systematic_literature_review.py' zotero-import `
-  --output-dir literature-reviews\zotero-library `
-  --topic "My Zotero Library" `
-  --dashboard-name zotero-literature-dashboard
+  --output-dir '<workspace>\literature-reviews\zotero-library' `
+  --topic 'My Zotero Library' `
+  --dashboard-name 'zotero-literature-dashboard'
 ```
 
-Optional controls:
+Omit `--limit` for a final full-library run. Use `--zotero-dir` only when auto-discovery or `ZOTERO_DATA_DIR` does not locate the library.
 
-- `--zotero-dir <path>` when Zotero is not under the default user folder.
-- `--limit 100` for a smoke test or a smaller dashboard only; do not use it in
-  the final Zotero dashboard unless the user asks.
-- `--max-text-chars 80000` to keep large libraries faster.
-- `--no-extract-text` only when the user wants metadata and PDF links without
-  text extraction.
-
-Expected Zotero-mode outputs:
-
-- `metadata/papers.json`
-- `metadata/papers.csv`
-- `metadata/zotero-import-summary.json`
-- `texts/`
-- `zotero-skipped.md`
-- `manual-download.md` explaining that no new downloads are needed in this mode
-- `review-bilingual.md`
-- `relationship-map.md`
-- `metadata-repair.md`
-- `dashboard-spec.json`
-- `<dashboard-name>.html`
-
-After generation, inspect a few records: confirm `local_pdf_path` opens, the
-paper count matches the intended PDF-backed set or limit, theme/method labels
-are populated, and the dashboard has no mojibake. If the user wants a polished
-final literature review, read representative extracted text files and refine
-`dashboard-spec.json`, `review-bilingual.md`, and `relationship-map.md` with
-real scholarly judgment.
-
-## Zotero API Import Mode
-
-Use Zotero API import mode when the user wants newly downloaded papers to be
-added back into Zotero automatically. Prefer this over editing `zotero.sqlite`
-directly. Never print or commit the user's API key.
-
-Key handling:
-
-- Read the key from `ZOTERO_API_KEY` or a user-provided `--api-key-file`.
-- Keep API keys outside the skill folder and outside share zips.
-- Verify permissions before writing. The key needs personal library write
-  access; PDF upload also needs file access. Group access is not needed unless
-  the user explicitly wants group-library imports.
-
-Verify a key:
+### Topic discovery
 
 ```powershell
-& '<python>' '<skill-dir>\scripts\zotero_api_import.py' --api-key-file '<key-file-or-folder>' verify-key
+& '<python>' '<skill-dir>\scripts\systematic_literature_review.py' init-config `
+  --topic '<topic>' --years 1 --min-if 5 `
+  --output '<run-dir>\review-config.json'
+
+& '<python>' '<skill-dir>\scripts\systematic_literature_review.py' collect `
+  --config '<run-dir>\review-config.json' `
+  --output-dir '<run-dir>' --max-results 120
 ```
 
-Import a downloaded-paper manifest:
+Verify journal evidence before finalizing. See `references/discovery-workflow.md`.
+
+### Dashboard
 
 ```powershell
-& '<python>' '<skill-dir>\scripts\zotero_api_import.py' --api-key-file '<key-file-or-folder>' import-manifest `
-  --manifest '<run-dir>\metadata\papers-to-zotero.json' `
-  --collection 'Codex Imported Papers' `
-  --tag 'Codex-imported' `
-  --upload-files `
-  --output '<run-dir>\metadata\zotero-api-import-log.json'
+& '<python>' '<skill-dir>\scripts\build_literature_dashboard.py' init-spec `
+  --papers '<run-dir>\metadata\papers.json' `
+  --output '<run-dir>\dashboard-spec.json'
+
+& '<python>' '<skill-dir>\scripts\build_literature_dashboard.py' build `
+  --papers '<run-dir>\metadata\papers.json' `
+  --spec '<run-dir>\dashboard-spec.json' `
+  --output-dir '<run-dir>' --dashboard-name 'literature-dashboard'
 ```
 
-For local linked PDFs that should appear in Zotero without using Zotero cloud
-file storage, replace `--upload-files` with `--link-files`:
+Use `--inline` for a single-file dashboard. Large libraries automatically use the scalable layout.
 
-```powershell
-& '<python>' '<skill-dir>\scripts\zotero_api_import.py' --api-key-file '<key-file-or-folder>' import-manifest `
-  --manifest '<run-dir>\metadata\papers-to-zotero.json' `
-  --collection 'Codex Imported Papers' `
-  --tag 'Codex-imported' `
-  --link-files `
-  --output '<run-dir>\metadata\zotero-api-import-log.json'
-```
+## Completion checks
 
-Manifest rows may include `title`, `authors`, `doi`, `journal`,
-`publication_date` or `publication_year`, `abstract`, `url`, and
-`local_pdf_path`. The importer creates `journalArticle` items, creates or reuses
-the collection, adds the tag, skips existing DOI matches by default, and uploads
-local PDF files as child attachments when `--upload-files` is set, or creates
-local linked-file child attachments when `--link-files` is set. If Zotero
-returns a storage-quota error for a PDF, keep the article item, log the failed
-attachment, and explain that Zotero cloud file storage may need more space or a
-local/manual import workflow.
+Before reporting completion:
 
-For local-only PDF workflows, use `--link-files`, not `--upload-files`. The
-Zotero Web API still writes Zotero library metadata online, but linked-file PDF
-attachments point to the user's local disk and do not upload the PDF bytes to
-Zotero File Storage. If `--link-files` is unavailable or a local Zotero setup
-does not sync linked-file attachment metadata as expected, use one of these
-fallback local-first approaches:
+- Confirm the intended library or search scope and final paper count.
+- Spot-check titles, DOI values, authors, years, and resolved PDF paths.
+- Confirm each detailed card's evidence level matches its source.
+- Confirm Chinese and English content is meaningful, not duplicated placeholder text.
+- Open the dashboard and test search, filters, paper details, PDF/Zotero links, reading status, stars, and notes.
+- Verify no mojibake, broken assets, personal paths, credentials, or user data entered the skill directory.
+- For Zotero writes, run a dry-run first and retain the write log.
 
-- Keep the Zotero article item created by the API and store `local_pdf_path` in
-  the dashboard overlay.
-- Generate a Zotero Desktop JavaScript runner that uses the local Zotero
-  JavaScript API to add linked-file PDF attachments from the user's disk.
-- On Windows, optionally generate a small PowerShell helper for the run folder
-  that copies the Zotero Desktop JavaScript runner to the clipboard and starts
-  Zotero. Do not use fragile SendKeys-style UI automation by default; let the
-  user click Zotero's Run button unless they explicitly accept that risk.
-- Generate a RIS/BibTeX import package for the user to import in Zotero
-  Desktop. Avoid direct writes to `zotero.sqlite`.
+## Bundled resources
 
-## Portability And Validation
+- `scripts/systematic_literature_review.py`: topic discovery, Zotero snapshot import, metadata normalization, queues, and exports.
+- `scripts/build_literature_dashboard.py`: dashboard spec creation and rendering.
+- `scripts/large_library_dashboard.py`: scalable layout for large libraries.
+- `scripts/dashboard_common.py`: shared dashboard UI, bilingual controls, reading state, stars, notes, and exports.
+- `scripts/citation_network.py`: OpenAlex-based in-collection citation enrichment.
+- `scripts/zotero_api_import.py`: Zotero Web API import and dashboard write-back.
+- `scripts/zotero_link_items.py`: local DOI/title matching to Zotero item keys.
+- `scripts/quick_validate.py`: offline portability and smoke validation.
+- `references/reporting-template.md`: final reporting structure.
+- `examples/demo-review/`: synthetic sample data; never cite it as real research.
 
-Use portable placeholders in instructions and commands. Resolve `<skill-dir>` to
-the installed skill folder and `<python>` to a real Python 3 executable. On
-Windows, the bare `python` command may point to the Microsoft Store placeholder;
-use the Codex bundled Python or another installed Python if that happens.
-
-Before sharing or after installing the skill on a new machine, run:
+## Validate this skill
 
 ```powershell
 & '<python>' '<skill-dir>\scripts\quick_validate.py' '<skill-dir>'
 ```
 
-The validator checks frontmatter, required files, accidental local paths,
-Python syntax, the default one-year config window, and a small bilingual
-dashboard build. Do not distribute `__pycache__`, run folders, browser profiles,
-PDFs, or downloaded publisher/session artifacts as part of the skill itself.
+Run this before creating a release archive.
 
-## Keyword And Scope Defaults
+<!-- //============XJQ(本次修改：在上游 v2 工作流上保留 MRI 专题、中文翻译、每刊限额和授权浏览器扩展）====================// -->
 
-<!-- //============XJQ(本次修改：补充 MRI 专题期刊来源注册表）====================// -->
+## MRI 专题与本地兼容扩展
 
-### MRI Journal Source Registry / MRI 期刊来源注册表
+### MRI 期刊来源注册表
 
-When the topic is MRI or magnetic resonance, the following journal-specific
-Crossref sources may be added to the run configuration. The user phrase
-magnetic medicine is normalized to *Magnetic Resonance in Medicine* (MRM), not
-treated as a separate journal:
+当主题属于 MRI、MR imaging 或 magnetic resonance 时，可在 discovery 配置中补充以下期刊来源。`magnetic medicine` 统一规范为 *Magnetic Resonance in Medicine*（MRM），不作为独立期刊：
 
-- Magnetic Resonance in Medicine (MRM): ISSN 1522-2594; Wiley
-- NeuroImage: ISSN 1053-8119 (linking ISSN 1095-9572); Elsevier
-- IEEE Transactions on Medical Imaging (TMI): ISSN 0278-0062; IEEE
-- Medical Image Analysis (MIA): ISSN 1361-8415; Elsevier
-- Radiology: ISSN 0033-8419 (online ISSN 1527-1315); RSNA
-- Medical Physics: ISSN 0094-2405 (online ISSN 2473-4209); Wiley
-- npj Digital Medicine: ISSN 2398-6352; Nature Portfolio
+- Magnetic Resonance in Medicine (MRM)：ISSN 1522-2594，Wiley
+- NeuroImage：ISSN 1053-8119（linking ISSN 1095-9572），Elsevier
+- IEEE Transactions on Medical Imaging (TMI)：ISSN 0278-0062，IEEE
+- Medical Image Analysis (MIA)：ISSN 1361-8415，Elsevier
+- Radiology：ISSN 0033-8419（online ISSN 1527-1315），RSNA
+- Medical Physics：ISSN 0094-2405（online ISSN 2473-4209），Wiley
+- npj Digital Medicine：ISSN 2398-6352，Nature Portfolio
 
-These are supplementary source routes, not an Impact Factor approval. Each
-record must still pass the configured MRI-context and date-window checks, and
-metadata-only or abstract-only evidence labels must be preserved.
+这些是补充检索路线，不等同于 Impact Factor 通过。每条记录仍须通过日期、MRI 语境和证据层级筛选；只有官方期刊或出版社页面才能作为正式期刊指标证据。
 
-<!-- //================XJQ(本次修改：补充 MRI 专题期刊来源注册表 END===============// -->
+### MRI 语境与证据边界
 
-<!-- //============XJQ(本次修改：增加 ZH 字段中文翻译闸门，禁止英文原文泄漏）====================// -->
+检索 MRI 相关主题时，标题、摘要或开放元数据至少要明确出现 MRI、MR imaging、magnetic resonance 或具体 MRI 序列/成像语境；仅有泛医学 AI、超声或 CT 语境的记录不得因关键词偶合纳入。只依据标题、摘要和开放元数据总结时，必须标记 `abstract_only` 或 `metadata_only`；没有摘要的记录要明确写“仅依据题目判断，未推断方法或结果”。预印本必须标记“未同行评审”。
 
-### Chinese ZH Translation Gate / ZH 中文翻译闸门
+### ZH 中文翻译闸门
 
-For every bilingual dashboard, details[*].zh must be Chinese prose, not an
-English title or English abstract copied under a ZH label. Keep the original
-evidence in details[*].en. After semantic notes are written, run:
-
-~~~powershell
-& '<python>' '<skill-dir>/scripts/translate_dashboard_zh.py' --papers <run>/metadata/papers.json --spec <run>/dashboard-spec.json --cache <run>/metadata/zh-translation-cache.json
-~~~
-
-The translator uses title/abstract/open metadata only, preserves EN evidence,
-and writes a Chinese-only fallback if the public translation endpoint fails.
-Before delivery, assert that every ZH field contains CJK characters and that
-the original English title/abstract is not copied verbatim into ZH. A record
-without an abstract must still say in Chinese that it is title-only and that
-methods/results are not inferred.
-
-<!-- //================XJQ(本次修改：增加 ZH 字段中文翻译闸门，禁止英文原文泄漏 END===============// -->
-
-When the user provides keywords, translate them into keyword groups. Treat the
-first group as the required domain and later groups as analytical/method groups
-unless the user specifies another logic.
-
-Example for building AI:
+每个双语 dashboard 的 `details[*]` 中，`zh` 必须是实际中文表述，不能把英文标题或英文摘要原样放在 ZH 标签下；原始证据保留在 `en`。完成语义卡片后运行：
 
 ```powershell
-& '<python>' '<skill-dir>\scripts\systematic_literature_review.py' init-config `
-  --topic "AI methods in architecture, buildings, and construction" `
-  --years 1 `
-  --min-if 5 `
-  --keyword-group "domain=architecture|building|construction|built environment" `
-  --keyword-group "ai=artificial intelligence|machine learning|deep learning|LLM|foundation model" `
-  --keyword-group "methods=reinforcement learning|computer vision|graph neural network|transformer|physics-informed neural network" `
-  --output literature-reviews\<topic-slug>\review-config.json
+& '<python>' '<skill-dir>\scripts\translate_dashboard_zh.py' `
+  --papers '<run-dir>\metadata\papers.json' `
+  --spec '<run-dir>\dashboard-spec.json' `
+  --cache '<run-dir>\metadata\zh-translation-cache.json'
 ```
 
-When the user does not provide a topic, use the original default:
+该脚本只使用标题、摘要和开放元数据，不读取 PDF、账号、密码或 Cookie；翻译接口失败时写入中文-only fallback，同时保留 EN。交付前检查每个 ZH 字段包含中文字符，且未逐字复制英文证据；没有摘要的记录必须说明“仅依据题目判断，未推断方法或结果”。
 
-- `construction`: prefabricated/modular/off-site construction
-- `lca`: life cycle assessment, embodied carbon, carbon footprint
-- `optimization`: multi-objective optimization, Pareto, NSGA-II
+### 每刊最多 10 篇
 
-Default inclusion logic: first keyword group AND at least one later keyword
-group. Use explicit `--query` values or edit `review-config.json` when a field
-needs a custom search equation.
-
-## Quality-First Selection Rule
-
-- Default to `--years 1`, `--min-if 5`, and a final target of `--limit 30`
-  unless the user asks for a different window or count.
-- Rank by relevance to the user keywords, cross-theme match strength, journal
-  quality evidence, citation/recency signals available in metadata, and article
-  importance. Do not rank by OA status.
-- Include OA and non-OA papers equally if they are among the best 30.
-- Treat OA PDF availability as metadata only. It is not a search filter and
-  should not trigger direct background downloading before the publisher article
-  page has been opened and checked.
-- If the user wants the school-login workflow, omit `--download-oa` and use
-  `--queue-all-manual` so every selected paper without a local PDF appears in
-  `manual-download.md`.
-
-## Core Workflow
-
-1. Create a run folder under `literature-reviews/<topic-slug>/`.
-2. Create and edit the config:
-   ```powershell
-   & '<python>' '<skill-dir>\scripts\systematic_literature_review.py' init-config --topic "<topic>" --years 1 --min-if 5 --output literature-reviews\<topic-slug>\review-config.json
-   ```
-   Add repeated `--keyword-group "name=term1|term2"` arguments for arbitrary
-   domains. Use repeated `--query "<exact search query>"` to override automatic
-   group combinations.
-3. Collect a candidate pool larger than the final target from OpenAlex,
-   Crossref-style OpenAlex metadata, source metrics, and Unpaywall metadata:
-   ```powershell
-   & '<python>' '<skill-dir>\scripts\systematic_literature_review.py' collect --config literature-reviews\<topic-slug>\review-config.json --output-dir literature-reviews\<topic-slug> --max-results 120
-   ```
-   This writes `metadata/all-candidates.*`,
-   `metadata/journal-if-evidence.csv`, and `if-verification-needed.md`.
-4. Verify journal Impact Factor from official journal or publisher pages. Read
-   `references/if-verification.md`, then update
-   `metadata/journal-if-evidence.csv`.
-5. Finalize the verified set as the top 30. For a school-login workflow, queue
-   selected papers for manual browser access:
-   ```powershell
-   & '<python>' '<skill-dir>\scripts\systematic_literature_review.py' finalize --candidates literature-reviews\<topic-slug>\metadata\all-candidates.json --if-evidence literature-reviews\<topic-slug>\metadata\journal-if-evidence.csv --output-dir literature-reviews\<topic-slug> --min-if 5 --limit 30 --queue-all-manual
-   ```
-   Do not add `--download-oa` for normal work. PDF access should proceed
-   through the publisher-visible workflow below.
-6. For non-OA papers in `manual-download.md`, ask the user to log in manually
-   through their school/library/publisher page in the active browser session.
-   Do not ask for passwords, store credentials, or bypass paywalls. Process
-   only the explicit batch the user confirms or supplies.
-7. Open each publisher article page, confirm that the article/full-text page is
-   visible under authorized access, then click the official page-level
-   `View PDF`, `Download PDF`, or equivalent PDF button. Save only the PDF that
-   comes from that visible publisher flow.
-8. Read downloaded PDFs with `pypdf` or an available PDF extractor. Label every
-   paper as `full-text read`, `abstract-only`, `metadata-only`,
-   `not accessible`, or `needs manual PDF`.
-9. Write bilingual outputs using `references/reporting-template.md`:
-   - `review-bilingual.md`
-   - `relationship-map.md`
-   - `dashboard-spec.json`
-10. Render the dashboard:
-   ```powershell
-   & '<python>' '<skill-dir>\scripts\build_literature_dashboard.py' init-spec --papers literature-reviews\<topic-slug>\metadata\papers.json --output literature-reviews\<topic-slug>\dashboard-spec.json
-   ```
-   Refine `dashboard-spec.json` after reading the papers, then:
-   ```powershell
-   & '<python>' '<skill-dir>\scripts\build_literature_dashboard.py' build --papers literature-reviews\<topic-slug>\metadata\papers.json --spec literature-reviews\<topic-slug>\dashboard-spec.json --output-dir literature-reviews\<topic-slug> --dashboard-name literature-dashboard
-   ```
-   Read `references/dashboard-spec.md` before refining the spec.
-
-## Preferred Browser Download Workflow
-
-When the user wants automatic PDF retrieval after a one-time school/library
-login, use the dedicated browser downloader instead of direct HTTP requests:
+如果用户指定每个期刊的文献上限，在日期/MRI 语境筛选和 DOI/标题去重之后、综述和 dashboard 生成之前执行确定性限额。默认上限为 10，并写入运行配置或运行日志：
 
 ```powershell
-& '<python>' '<skill-dir>\scripts\browser_pdf_downloader.py' `
-  --run-dir literature-reviews\<topic-slug> `
-  --browser chrome `
-  --start-rank 1 `
-  --limit 30
-```
-
-This script launches a separate Chrome profile, sets PDFs to download instead
-of using hidden requests, fixes the download directory to the run folder's
-`pdfs/`, opens each official article page, waits while the user completes any
-school/library login in Chrome, clicks the visible publisher PDF control, opens
-the PDF page/viewer, then clicks the visible PDF-viewer download/save control.
-It validates, renames, and records the downloaded PDF in `metadata/papers.json`.
-By default it watches only the run folder's `pdfs/` directory for stability;
-use `--watch-user-downloads` only when the user has explicitly saved PDFs into
-the normal Downloads folder and wants Codex to import them.
-
-Use this as the default for non-OA or mixed-access review batches. It preserves
-the user's browser login session in the dedicated profile for later batches, but
-Codex must not read, export, or store credentials/cookies. If Chrome is blocked
-by a publisher page, fall back to visible manual saving and then import the
-file, rather than using hidden network URLs. Use `--direct-pdf-download` only
-as a fallback when a publisher's PDF viewer cannot expose a usable visible
-download control.
-
-## Optional ChemDeep Integration
-
-If the `literature-survey` or `deep-research` ChemDeep skills are installed and
-the `mcp__chemdeep__...` tools are actually available in the active Codex
-session, they may be used as an optional helper layer, not as a replacement for
-this skill's quality gate and reporting workflow.
-
-Use ChemDeep only for tasks it can improve:
-
-- `literature-survey`: lightweight search, scoring, full-text detail fetching,
-  browser-session preparation, or single-paper PDF download.
-- `deep-research`: high-cost multi-iteration research only after explicit user
-  confirmation.
-
-When combining with ChemDeep:
-
-1. Keep this skill responsible for official IF verification, final inclusion,
-   metadata normalization, bilingual synthesis, relationship maps, and dashboard
-   rendering.
-2. Use ChemDeep's live-browser/PDF tools only after the user explicitly asks for
-   full text or PDF downloading and has a lawful school/library/publisher
-   session.
-3. Preserve the same access boundary: official article page first, visible
-   `Open/View PDF` control second, visible PDF-viewer download/save control
-   third.
-4. If ChemDeep tools are not visible in the active session, do not pretend they
-   are available. Continue with the bundled OpenAlex/Unpaywall/browser workflow
-   and tell the user that Codex must be restarted or the ChemDeep MCP server must
-   be configured before those tools can be called.
-5. Never let ChemDeep or any auxiliary downloader weaken the rules against
-   paywall bypass, hidden signed URLs, credential handling, CAPTCHA automation,
-   or false full-text-read claims.
-
-## Optional ScienceDirect Live Session Fetcher
-
-If `sciencedirect-live-session-fetcher` is installed, use it as a
-publisher-specific helper for ScienceDirect/Elsevier-heavy batches only. It is
-usually more useful than ChemDeep for this narrow problem because it provides a
-dedicated Edge DevTools session, one-shot browser profiles, serial retries,
-sleep intervals, and per-row success/missing CSVs.
-
-Recommended routing:
-
-- Use this `zotero-literature-visualizer` skill for discovery, IF verification,
-  selection, metadata normalization, summaries, classification, and dashboards.
-- For ScienceDirect/Elsevier rows, default to `sciencedirect-live-session-fetcher`
-  after the user has explicitly confirmed an authorized browser session. Prefer a
-  clean one-shot Edge session with extensions disabled and serial 5-8 second
-  pauses. Use a small failed-row CSV when retrying.
-- Use the bundled `browser_pdf_downloader.py` for non-Elsevier publishers or
-  when the user specifically asks for the strict visible workflow: official
-  article page -> visible `Open/View PDF` -> visible PDF-viewer download/save.
-- After any ScienceDirect helper run, import only files that pass `%PDF-`
-  validation and title/DOI matching, then update `papers.json`, `papers.csv`,
-  and the dashboard. Do not mark a paper `full-text read` until the actual PDF
-  text or full article page has been accessed.
-
-Bridge helper:
-
-```powershell
-& '<python>' '<skill-dir>\scripts\sciencedirect_fetcher_bridge.py' prepare-csv `
-  --run-dir literature-reviews\<topic-slug> `
-  --source literature-reviews\<topic-slug>\metadata\verified-high-if-papers.json `
-  --output literature-reviews\<topic-slug>\sciencedirect-fetch-input.csv `
-  --missing-only
-
-powershell -ExecutionPolicy Bypass -File '<sciencedirect-skill>\scripts\run_devtools_sciencedirect_fetch.ps1' `
-  -InputCsv literature-reviews\<topic-slug>\sciencedirect-fetch-input.csv `
-  -OutDir literature-reviews\<topic-slug>\sciencedirect-fetch-output `
-  -PythonExe '<python>' `
-  -DebugPort 9222 `
-  -PageWaitSeconds 8 `
-  -InterItemSleepSeconds 7
-
-& '<python>' '<skill-dir>\scripts\sciencedirect_fetcher_bridge.py' import-results `
-  --run-dir literature-reviews\<topic-slug> `
-  --target literature-reviews\<topic-slug>\metadata\verified-high-if-papers.json `
-  --results literature-reviews\<topic-slug>\sciencedirect-fetch-output\devtools_results.csv
-```
-
-Boundary:
-
-- The ScienceDirect helper may extract short-lived ScienceDirect PDF metadata
-  inside the authorized browser session. Treat that as a fallback for reliability,
-  not as the default user-facing workflow when the user has asked for visible
-  PDF clicking first.
-- Do not use it for non-Elsevier publishers unless its Firefox mixed-publisher
-  route exposes normal page metadata or visible PDF links.
-- Do not reuse old browser-profile runtime folders as an access source. Launch a
-  fresh dedicated session and let the user complete any login or verification.
-- Never use it to bypass access controls, automate CAPTCHA/Cloudflare, copy
-  credentials, or make hidden signed URLs look like durable PDF links.
-
-## Impact Factor Rules
-
-- Official Impact Factor evidence is mandatory for main inclusion when the user
-  requests IF filtering.
-- Use only the journal official page, a publisher-hosted journal page, or a
-  metrics page linked from that journal/publisher page.
-- Do not use OpenAlex, SJR, CiteScore, ResearchGate, LetPub, Resurchify,
-  third-party journal lists, or search snippets as final IF evidence.
-- If the official page does not clearly show the required IF value, keep the
-  journal in `if-verification-needed.md` and exclude its papers until verified.
-- Record `official_impact_factor`, `official_if_year`, `evidence_url`,
-  `evidence_note`, `verified_date`, and `verified_by`.
-- Match journals by title and ISSN/eISSN when similarly named titles exist.
-
-<!-- //============XJQ(本次修改代码作用：加入按期刊限制文献数量的可复用规则和命令）====================// -->
-
-### Per-Journal Paper Cap / 每刊文献数量上限
-
-When the user specifies a maximum number of papers per journal, write
-`max_papers_per_journal` into the run configuration and apply the cap after
-date/MRI-context filtering and DOI/title deduplication, but before reports and
-dashboard generation. The cap applies to every normalized journal in the final
-set, including journals discovered outside the requested registry.
-
-Use the bundled deterministic post-processor:
-
-~~~powershell
-& '<python>' '<skill-dir>/scripts/cap_journal_papers.py' `
-  --input '<run>/metadata/all-candidates.json' `
-  --output '<run>/metadata/papers.json' `
-  --summary '<run>/metadata/journal-cap-summary.json' `
+& '<python>' '<skill-dir>\scripts\cap_journal_papers.py' `
+  --input '<run-dir>\metadata\all-candidates.json' `
+  --output '<run-dir>\metadata\papers.json' `
+  --summary '<run-dir>\metadata\journal-cap-summary.json' `
   --max-per-journal 10
-~~~
+```
 
-The helper keeps the existing positive rank order within each journal. Records
-without a rank are ordered by publication date, relevance score, citation
-count, title, and DOI as deterministic tie-breakers. It renumbers the selected
-records from 1 and writes before/after counts for every journal. If a dashboard
-already exists, remap `details` and `paper_assignments` by DOI (or normalized
-title plus first author when DOI is absent) before rebuilding; never pair a
-translated note with a different paper merely because its rank changed.
+脚本按已有正 rank 保留顺序；无 rank 时以日期、相关性、被引数、标题和 DOI 做稳定排序，并输出每刊 before/after/removed。重建 dashboard 时按 DOI，或无 DOI 时按规范化标题+第一作者，重新映射详情和分类，不能因为 rank 变化把译文配到另一篇论文。
 
-<!-- //================XJQ(本次修改代码作用：加入按期刊限制文献数量的可复用规则和命令 END===============// -->
+### 授权浏览器全文路线（可选）
 
-## Non-OA And Manual Access
+对用户明确要求且已有合法学校/图书馆/出版社访问权限的论文，可使用套件保留的 `scripts/browser_pdf_downloader.py`：先打开官方文章页，再点击可见的 `View PDF`/`Download PDF`，只保存浏览器显示流程产生的 PDF。禁止构造隐藏 PDF URL、绕过付费墙、自动 CAPTCHA、读取或保存密码/Cookie；无法自动保存时请用户手动点击保存后再导入。不得在没有实际 PDF 或全文页面证据时声称 `full_text`。
 
-- Do not download a paper solely from a constructed PDF URL, temporary signed
-  asset URL, OpenAlex PDF URL, Unpaywall URL, or hidden network request.
-- For every publisher-hosted paper, first open the official article/full-text
-  page in a visible, authorized browser session. Only after the article page is
-  accessible should Codex click the page's visible `View PDF`, `Download PDF`,
-  or equivalent publisher PDF control. Prefer opening the PDF page/viewer first,
-  then clicking the visible PDF-viewer download/save control to save the file.
-- For repositories such as arXiv, PMC, institutional repositories, or
-  user-supplied files, the repository landing page should still be opened or
-  recorded before saving the PDF.
-- For closed or login-required papers, create or update `manual-download.md`
-  with DOI, publisher URL, journal, IF evidence status, priority, and reason.
-- Ask the user to manually log in to their school/library/publisher portal when
-  those papers matter for the review.
-- It is acceptable to open the publisher/library page in the browser and pause
-  while the user logs in. The user must type credentials themselves.
-- Use only the active browser session or PDFs the user places in the run folder.
-- Never bypass paywalls, scrape credentials, store cookies, or automate hidden
-  login steps.
-- Never treat a temporary `pdf.sciencedirectassets.com`, S3, CDN, or signed PDF
-  URL as the starting point for access. Those URLs may be used only as the
-  browser's result after Codex has visibly opened the article page and clicked
-  the official PDF button.
-- Do not save `Supplementary Information`, `Supporting Information`, or
-  additional-file PDFs as the article PDF unless the user explicitly asks for
-  supplementary materials.
-- If the browser or PDF viewer blocks automated file saving, pause and ask the
-  user to click the visible publisher/PDF-viewer save button manually. Codex may
-  then import, rename, validate, and summarize the PDF file that appears in the
-  downloads folder.
-- Never claim full-text reading unless a PDF or full-text page was actually
-  accessed.
+### ScienceDirect 可选桥接
 
-## Dashboard Rules
+若另外安装了 `sciencedirect-live-session-fetcher`，仅对 Elsevier/ScienceDirect 记录在用户确认授权浏览器会话后使用；`scripts/sciencedirect_fetcher_bridge.py` 只负责准备输入 CSV 和导入结果，不替代本 Skill 的筛选、证据和 PDF 校验。导入前检查 `%PDF-` 文件头和 DOI/题目匹配，失败行记录在结果 CSV；没有该依赖时使用 `browser_pdf_downloader.py` 或可见手动保存 fallback。
 
-- Use 4-8 primary themes and 4-8 primary method families for a 30-paper review
-  unless the literature clearly demands otherwise. Prefer 6 or fewer primary
-  themes for the visible paper-card taxonomy.
-- For Zotero or other large-library dashboards over 100 papers, keep the 5-6
-  primary themes but add a second-level `subtheme` taxonomy. Keep each primary
-  theme to at most 8 visible subthemes by merging small long-tail clusters into
-  an "Other in <theme>" group.
-- Assign each paper exactly one primary theme and one primary method in
-  `dashboard-spec.json`; mention secondary relationships in the bilingual notes.
-  For large-library layouts, also assign exactly one `subtheme`.
-- Keep category names stable across `review-bilingual.md`,
-  `relationship-map.md`, and `dashboard-spec.json`.
-- The dashboard should include paper cards, bilingual detail notes, theme donut,
-  method donut, theme-method flow map, official journal homepage links, DOI
-  links, and local PDF launcher links when files exist.
-- Large-library dashboards should use four main views: `Overview`, `Explore`,
-  `Map`, and `Journals`. Use an aggregated theme-method map rather than one
-  curve per paper, and default article lists to compact rows grouped by
-  collapsible subtheme and year. In the Explore sidebar, show only the primary
-  themes at first, then reveal the selected primary theme's subthemes.
-- Keep `Unknown` or missing journal metadata out of normal journal rankings.
-  Show it as `Metadata missing / 元数据缺失` and write `metadata-repair.md`.
-- Paper-card filter controls should default to `All` plus theme categories only.
-  Keep method families visible in the method donut and theme-method flow map,
-  not as extra paper-card filters.
-- Remove or avoid low-value status panels once PDFs and evidence are already
-  integrated into the cards and detail layer.
+### 官方期刊质量证据
 
-## Bundled Resources
+用户要求 Impact Factor 或 CAS 分区时，只接受期刊官网、出版社页面，或由期刊/出版社明确链接的 Clarivate/CAS 页面；OpenAlex、SJR、CiteScore、ResearchGate、搜索摘要和第三方期刊榜单不能作为正式证据。若官方页面没有清晰数值，记录到 `if-verification-needed.md`，不要把未核实指标显示为正式值，并保存 `official_impact_factor`、`official_if_year`、`evidence_url`、`evidence_note`、`verified_date` 和 `verified_by`。
 
-- `scripts/systematic_literature_review.py`: config creation, generic
-  keyword-group search, OpenAlex discovery, Unpaywall enrichment, journal IF
-  checklist generation, official-IF finalization, PDF access queue creation, and
-  metadata export.
-- `scripts/browser_pdf_downloader.py`: dedicated Chrome/Edge authorized-browser
-  downloader for school/library-login batches. It opens official article pages,
-  clicks visible PDF controls, uses browser-native downloads, and updates local
-  PDF metadata.
-- `scripts/build_literature_dashboard.py`: starter dashboard-spec creation and
-  reusable interactive dashboard rendering.
-- `scripts/large_library_dashboard.py`: offline large-library dashboard layout
-  for 100+ paper Zotero/full-text libraries.
-- `scripts/quick_validate.py`: offline portability and smoke-test validator for
-  sharing or installing the skill on another machine.
-- `references/if-verification.md`: official Impact Factor verification rules.
-- `references/reporting-template.md`: bilingual review, relationship-map, and
-  per-paper note structure.
-- scripts/translate_dashboard_zh.py: translate EN evidence fields into Chinese for the ZH layer while preserving the original EN layer and a Chinese-only fallback on translation failure.
-- scripts/cap_journal_papers.py: apply a deterministic maximum paper count per normalized journal and emit a before/after cap summary.
-- `references/dashboard-spec.md`: schema and rules for the dashboard semantic
-  layer.
+### Dashboard 质量闸门
+
+每篇论文只能有一个主主题和一个主方法；大型 Zotero 库再增加一个 `subtheme`。保持 `review-bilingual.md`、`relationship-map.md` 和 `dashboard-spec.json` 的分类名称一致。卡片应包含研究问题、方法/设计、数据或样本、主要发现、局限、综述相关性和证据层级，并提供官方期刊主页、DOI 与存在时的本地 PDF 入口。未知期刊不要进入正常期刊排名，显示为 `Metadata missing / 元数据缺失` 并写 `metadata-repair.md`。生成 dashboard 后至少测试搜索、主题筛选、详情弹窗、阅读状态、星标、笔记、引用网络和链接。
+
+### 可选辅助 Skill
+
+若当前会话确实安装并暴露了 `literature-survey`、`deep-research` 或其他文献辅助工具，只能把它们作为检索/浏览器准备的辅助层；本 Skill 仍负责 MRI 语境筛选、官方质量证据、元数据规范化、证据层级、双语卡片、关系图和 dashboard。辅助工具不可用时，不得假装已调用；继续使用本 Skill 的公开元数据与授权浏览器流程。
+
+### 本地附加资源
+
+上游 v2 资源（引用网络、增量 NEW 摘要、阅读状态、分享卡和 Zotero 回写）与以下本地扩展并存：
+
+- `scripts/translate_dashboard_zh.py`：逐篇中文翻译和离线安全 fallback；
+- `scripts/cap_journal_papers.py`：每刊确定性数量上限；
+- `scripts/browser_pdf_downloader.py`：授权 Chrome/Edge 可见 PDF 流程；
+- `scripts/sciencedirect_fetcher_bridge.py`：ScienceDirect live-session 输入/结果桥接；
+- `scripts/test_translate_dashboard_zh.py`、`scripts/test_cap_journal_papers.py`：本地扩展回归测试。
+
+<!-- //================XJQ(本次修改：在上游 v2 工作流上保留 MRI 专题、中文翻译、每刊限额和授权浏览器扩展 END===============// -->

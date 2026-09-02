@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "suite_name": "literature-radar-suite",
-  "suite_version": "0.1.0",
+  "suite_version": "0.1.1",
   "bundle_root": "bundle/skills",
   "target_root": "<CodexHome>/skills",
   "update_policy": "bundle_release",
@@ -38,7 +38,14 @@
       "name": "zotero-literature-visualizer",
       "path": "bundle/skills/zotero-literature-visualizer",
       "required_for": ["visualizer"],
-      "source": {"type": "local_snapshot", "installed_path": "<CodexHome>/skills/zotero-literature-visualizer"}
+      "source": {
+        "type": "github_snapshot",
+        "repository": "xuezheng627/zotero-literature-visualizer",
+        "ref": "main",
+        "commit": "cc698cd1af730a9b3df6fe1a774652a72b1e8b8d",
+        "fetched_at": "2026-08-27",
+        "installed_path": "<CodexHome>/skills/zotero-literature-visualizer"
+      }
     },
     {
       "name": "daily-literature-digest",

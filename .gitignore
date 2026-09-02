@@ -1,0 +1,36 @@
+# //============XJQ(本次修改：阻止运行时资料、凭据和本地研究数据进入公开仓库)====================//
+# User configuration and runtime state
+daily-literature-digest.config.json
+**/daily-literature-digest.config.json
+.env
+.env.*
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.log
+*.py[cod]
+__pycache__/
+**/__pycache__/
+
+# Local literature and browser data
+*.pdf
+targetpapers/
+**/targetpapers/
+literature-reviews/
+**/literature-reviews/
+daily-literature-digests/
+**/daily-literature-digests/
+browser-profile/
+browser-profile-*/
+**/browser-profile/
+**/browser-profile-*/
+cookies/
+**/cookies/
+
+# Operating-system/editor artifacts
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+# //================XJQ(本次修改：阻止运行时资料、凭据和本地研究数据进入公开仓库 END===============//

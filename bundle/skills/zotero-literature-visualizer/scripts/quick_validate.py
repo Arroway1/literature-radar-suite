@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -55,39 +56,64 @@ def check_frontmatter(skill_dir: Path) -> None:
 
 
 def check_no_generated_or_local_artifacts(skill_dir: Path) -> None:
-    pycache = list(skill_dir.rglob("__pycache__"))
-    if pycache:
-        fail("__pycache__ folders should not be shipped with the skill")
-    home = str(Path.home())
-    local_workspace_drive = "E:"
-    local_workspace_name = "project" + "2"
-    forbidden = [
-        home,
-        home.replace("\\", "/"),
-        "\\".join([local_workspace_drive, local_workspace_name]),
-        "/".join([local_workspace_drive, local_workspace_name]),
-        "building-energy-carbon-ai-feasibility",
-        "polar-architecture-buildings",
-        "prefabricated-modular-lca-moo-trial",
-        "127.0.0.1:8770",
-    ]
+    generated_dirs = {
+        "__pycache__",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        "browser-profile",
+        "browser-data",
+        "chrome-profile",
+        "edge-profile",
+        "literature-reviews",
+        "runs",
+        "downloads",
+    }
+    generated_files = {"zotero.sqlite", "cookies", "credentials.json", ".env"}
+    generated_suffixes = {".pyc", ".pyo", ".pdf", ".log"}
+
     offenders: list[str] = []
     for path in skill_dir.rglob("*"):
-        if not path.is_file() or path.suffix.lower() in {".pyc", ".pdf", ".png", ".jpg", ".jpeg"}:
+        relative = path.relative_to(skill_dir)
+        if ".git" in relative.parts:
+            continue
+        if path.is_dir() and path.name.lower() in generated_dirs:
+            offenders.append(f"generated/private directory: {relative}")
+            continue
+        if not path.is_file():
+            continue
+        lower_name = path.name.lower()
+        if lower_name in generated_files or path.suffix.lower() in generated_suffixes:
+            offenders.append(f"generated/private file: {relative}")
             continue
         if path.name == "quick_validate.py":
             continue
-        text = read_text(path)
-        for token in forbidden:
-            if token in text:
-                offenders.append(f"{path.relative_to(skill_dir)} contains {token}")
+        if path.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".ico"}:
+            continue
+        try:
+            text = read_text(path)
+        except UnicodeDecodeError:
+            continue
+        checks = {
+            r"(?i)[A-Z]:[\\/]Users[\\/][^<>\s]+": "Windows user path",
+            r"/Users/[^<>\s]+": "macOS user path",
+            r"(?i)/home/[^<>\s]+": "Linux user path",
+            r"(?i)[\w.+-]+@(?:gmail|outlook|hotmail|yahoo|icloud|protonmail)\.[A-Z]{2,}": "personal email",
+            r"(?i)-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----": "private key",
+        }
+        for pattern, label in checks.items():
+            if re.search(pattern, text):
+                offenders.append(f"{relative} contains a {label}")
     if offenders:
-        fail("; ".join(offenders[:6]))
-    ok("no generated cache folders or local run paths")
+        fail("; ".join(offenders[:10]))
+    ok("no generated artifacts, user paths, personal emails, or private keys")
 
 
 def run(command: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
-    result = subprocess.run(command, cwd=str(cwd), text=True, capture_output=True, encoding="utf-8")
+    # PYTHONDONTWRITEBYTECODE keeps validation runs from dropping __pycache__
+    # into the skill folder, which would fail the artifact check on the next run.
+    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
+    result = subprocess.run(command, cwd=str(cwd), text=True, capture_output=True, encoding="utf-8", env=env)
     if result.returncode != 0:
         print(result.stdout)
         print(result.stderr, file=sys.stderr)

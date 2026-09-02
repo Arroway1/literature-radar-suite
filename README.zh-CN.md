@@ -2,6 +2,28 @@
 
 这是一个可统一发布和更新的 MRI 文献工作流 Skill 套件。每个依赖仍保留独立目录，因此 `$paper-close-reading`、`$paper-vault` 等独立调用能力不会丢失；`literature-radar-hub` 负责统一入口、模式选择和依赖预检。
 
+<!-- //============XJQ(本次修改：提供公开 GitHub 仓库的下载与更新入口)====================// -->
+公开仓库：<https://github.com/Arroway1/literature-radar-suite>
+
+新用户可以下载 ZIP，或执行：
+
+```powershell
+git clone https://github.com/Arroway1/literature-radar-suite.git
+cd literature-radar-suite
+& .\scripts\install_literature_radar_suite.ps1
+```
+
+后续更新：
+
+```powershell
+git pull --ff-only
+& .\scripts\update_literature_radar_suite.ps1
+```
+<!-- //================XJQ(本次修改：提供公开 GitHub 仓库的下载与更新入口 END===============// -->
+
+当前套件版本为 `0.1.1`。其中 `zotero-literature-visualizer` 已同步上游
+`xuezheng627/zotero-literature-visualizer` 的 `main`（2026-08-27 快照），并保留本套件的 MRI 期刊注册表、ZH 中文翻译闸门、每刊最多 10 篇和授权浏览器扩展。
+
 ## 包含内容
 
 当前套件包含：
@@ -12,6 +34,8 @@
 - `daily-literature-digest`
 - `paper-vault`
 - `paper-close-reading`
+
+Visualizer 同时包含上游 v2 的引用关系网络、增量 NEW 摘要、阅读状态、分享卡、Zotero 回写、公共 dashboard 组件和合成示例。
 
 `sciencedirect-live-session-fetcher` 当前没有安装到本机，因此没有伪造占位目录；需要该全文路线时，依赖预检会提示安装，或使用 Visualizer 的授权浏览器 fallback。
 

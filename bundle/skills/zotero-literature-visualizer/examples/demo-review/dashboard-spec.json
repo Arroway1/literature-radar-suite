@@ -1,0 +1,756 @@
+{
+  "title": "演示：建筑能源 AI 文献综述 / DEMO: AI for Building Energy Review",
+  "subtitle": "合成演示数据，仅用于查看仪表盘效果 / Synthetic demo data for previewing the dashboard.",
+  "layout": "review-dashboard",
+  "theme_definitions": [
+    {
+      "name": "Building Energy Prediction / 建筑能耗预测",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#4e79a7"
+    },
+    {
+      "name": "Carbon Assessment and LCA / 碳排评估与LCA",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#f28e2b"
+    },
+    {
+      "name": "HVAC Control and Optimization / 暖通控制与优化",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#59a14f"
+    },
+    {
+      "name": "Generative Design / 生成式设计",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#e15759"
+    },
+    {
+      "name": "Urban Energy Modelling / 城市能耗建模",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#b07aa1"
+    },
+    {
+      "name": "Occupant Behaviour / 人员行为",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#76b7b2"
+    }
+  ],
+  "subtheme_definitions": [
+    {
+      "name": "Energy and HVAC / 能耗与HVAC",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#4e79a7"
+    },
+    {
+      "name": "AI Prediction / AI预测",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#f28e2b"
+    },
+    {
+      "name": "Carbon and LCA / 碳排与LCA",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#59a14f"
+    },
+    {
+      "name": "Design Optimization / 设计优化",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#e15759"
+    },
+    {
+      "name": "Simulation and Digital Twin / 仿真与数字孪生",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#b07aa1"
+    }
+  ],
+  "method_definitions": [
+    {
+      "name": "Transformer / Foundation Model",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#4e79a7"
+    },
+    {
+      "name": "Review / Framework",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#f28e2b"
+    },
+    {
+      "name": "Computer Vision",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#59a14f"
+    },
+    {
+      "name": "Graph Neural Network",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#e15759"
+    },
+    {
+      "name": "Reinforcement Learning",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#b07aa1"
+    },
+    {
+      "name": "Physics-Informed AI",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#76b7b2"
+    },
+    {
+      "name": "LLM / Knowledge Graph",
+      "description": "Auto-classified; refine this description after full-text review.",
+      "color": "#edc948"
+    }
+  ],
+  "paper_assignments": {
+    "1": {
+      "theme": "Building Energy Prediction / 建筑能耗预测",
+      "subtheme": "Energy and HVAC / 能耗与HVAC",
+      "method": "Graph Neural Network"
+    },
+    "2": {
+      "theme": "Building Energy Prediction / 建筑能耗预测",
+      "subtheme": "Energy and HVAC / 能耗与HVAC",
+      "method": "Graph Neural Network"
+    },
+    "3": {
+      "theme": "Building Energy Prediction / 建筑能耗预测",
+      "subtheme": "Energy and HVAC / 能耗与HVAC",
+      "method": "Transformer / Foundation Model"
+    },
+    "4": {
+      "theme": "Building Energy Prediction / 建筑能耗预测",
+      "subtheme": "AI Prediction / AI预测",
+      "method": "Review / Framework"
+    },
+    "5": {
+      "theme": "Building Energy Prediction / 建筑能耗预测",
+      "subtheme": "Simulation and Digital Twin / 仿真与数字孪生",
+      "method": "Transformer / Foundation Model"
+    },
+    "6": {
+      "theme": "HVAC Control and Optimization / 暖通控制与优化",
+      "subtheme": "Energy and HVAC / 能耗与HVAC",
+      "method": "LLM / Knowledge Graph"
+    },
+    "7": {
+      "theme": "HVAC Control and Optimization / 暖通控制与优化",
+      "subtheme": "AI Prediction / AI预测",
+      "method": "Review / Framework"
+    },
+    "8": {
+      "theme": "HVAC Control and Optimization / 暖通控制与优化",
+      "subtheme": "Energy and HVAC / 能耗与HVAC",
+      "method": "Graph Neural Network"
+    },
+    "9": {
+      "theme": "HVAC Control and Optimization / 暖通控制与优化",
+      "subtheme": "AI Prediction / AI预测",
+      "method": "Computer Vision"
+    },
+    "10": {
+      "theme": "Carbon Assessment and LCA / 碳排评估与LCA",
+      "subtheme": "Carbon and LCA / 碳排与LCA",
+      "method": "Physics-Informed AI"
+    },
+    "11": {
+      "theme": "Carbon Assessment and LCA / 碳排评估与LCA",
+      "subtheme": "Carbon and LCA / 碳排与LCA",
+      "method": "Computer Vision"
+    },
+    "12": {
+      "theme": "Carbon Assessment and LCA / 碳排评估与LCA",
+      "subtheme": "Carbon and LCA / 碳排与LCA",
+      "method": "Reinforcement Learning"
+    },
+    "13": {
+      "theme": "Carbon Assessment and LCA / 碳排评估与LCA",
+      "subtheme": "Carbon and LCA / 碳排与LCA",
+      "method": "Transformer / Foundation Model"
+    },
+    "14": {
+      "theme": "Generative Design / 生成式设计",
+      "subtheme": "Design Optimization / 设计优化",
+      "method": "Physics-Informed AI"
+    },
+    "15": {
+      "theme": "Generative Design / 生成式设计",
+      "subtheme": "Carbon and LCA / 碳排与LCA",
+      "method": "Reinforcement Learning"
+    },
+    "16": {
+      "theme": "Generative Design / 生成式设计",
+      "subtheme": "Design Optimization / 设计优化",
+      "method": "Computer Vision"
+    },
+    "17": {
+      "theme": "Urban Energy Modelling / 城市能耗建模",
+      "subtheme": "Energy and HVAC / 能耗与HVAC",
+      "method": "Review / Framework"
+    },
+    "18": {
+      "theme": "Urban Energy Modelling / 城市能耗建模",
+      "subtheme": "AI Prediction / AI预测",
+      "method": "Transformer / Foundation Model"
+    },
+    "19": {
+      "theme": "Urban Energy Modelling / 城市能耗建模",
+      "subtheme": "Energy and HVAC / 能耗与HVAC",
+      "method": "Transformer / Foundation Model"
+    },
+    "20": {
+      "theme": "Occupant Behaviour / 人员行为",
+      "subtheme": "AI Prediction / AI预测",
+      "method": "Review / Framework"
+    },
+    "21": {
+      "theme": "Occupant Behaviour / 人员行为",
+      "subtheme": "Simulation and Digital Twin / 仿真与数字孪生",
+      "method": "Reinforcement Learning"
+    }
+  },
+  "details": {
+    "1": {
+      "topic": {
+        "zh": "聚焦建筑能耗预测方向，研究「Physics-informed neural networks」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Building Energy Prediction, the paper studies how \"Physics-informed neural networks\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Graph Neural Network 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Graph Neural Network is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用示范项目的全过程数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses full-process data from a demonstration project; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 20%–31% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 20%–31% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：跨建筑类型的泛化未充分测试。",
+        "en": "Main limitation: generalisation across building types is not fully tested."
+      },
+      "relevance": {
+        "zh": "发表于 Energy and Buildings，为后续综述与标准制定提供了关键证据，值得纳入相关综述的核心证据链。",
+        "en": "Published in Energy and Buildings, it supplies key evidence for future reviews and standards — worth a place in the core evidence chain of a review."
+      }
+    },
+    "2": {
+      "topic": {
+        "zh": "聚焦建筑能耗预测方向，研究「Transfer learning across climate zones」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Building Energy Prediction, the paper studies how \"Transfer learning across climate zones\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Graph Neural Network 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Graph Neural Network is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用跨气候区的公开数据集进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open datasets across climate zones; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 11%–17% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 11%–17% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：长期漂移与在线更新策略未覆盖。",
+        "en": "Main limitation: long-term drift and online updating are not covered."
+      },
+      "relevance": {
+        "zh": "发表于 Energy and Buildings，展示了跨学科方法迁移的清晰路径，值得纳入相关综述的核心证据链。",
+        "en": "Published in Energy and Buildings, it shows a clear path for cross-disciplinary method transfer — worth a place in the core evidence chain of a review."
+      }
+    },
+    "3": {
+      "topic": {
+        "zh": "聚焦建筑能耗预测方向，研究「Uncertainty-aware LSTM ensembles」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Building Energy Prediction, the paper studies how \"Uncertainty-aware LSTM ensembles\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Transformer 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Transformer is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用示范项目的全过程数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses full-process data from a demonstration project; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 20%–31% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 20%–31% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：跨建筑类型的泛化未充分测试。",
+        "en": "Main limitation: generalisation across building types is not fully tested."
+      },
+      "relevance": {
+        "zh": "发表于 Nature Energy，为后续综述与标准制定提供了关键证据，值得纳入相关综述的核心证据链。",
+        "en": "Published in Nature Energy, it supplies key evidence for future reviews and standards — worth a place in the core evidence chain of a review."
+      }
+    },
+    "4": {
+      "topic": {
+        "zh": "聚焦建筑能耗预测方向，研究「Attention-based transformers」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Building Energy Prediction, the paper studies how \"Attention-based transformers\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Review 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Review is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用示范项目的全过程数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses full-process data from a demonstration project; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 20%–31% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 20%–31% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：跨建筑类型的泛化未充分测试。",
+        "en": "Main limitation: generalisation across building types is not fully tested."
+      },
+      "relevance": {
+        "zh": "发表于 Automation in Construction，为后续综述与标准制定提供了关键证据，值得纳入相关综述的核心证据链。",
+        "en": "Published in Automation in Construction, it supplies key evidence for future reviews and standards — worth a place in the core evidence chain of a review."
+      }
+    },
+    "5": {
+      "topic": {
+        "zh": "聚焦建筑能耗预测方向，研究「Hybrid grey-box models coupling EnergyPlus with gradient boosting」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Building Energy Prediction, the paper studies how \"Hybrid grey-box models coupling EnergyPlus with gradient boosting\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Transformer 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Transformer is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用跨气候区的公开数据集进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open datasets across climate zones; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 11%–17% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 11%–17% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：长期漂移与在线更新策略未覆盖。",
+        "en": "Main limitation: long-term drift and online updating are not covered."
+      },
+      "relevance": {
+        "zh": "发表于 Energy Conversion and Management，展示了跨学科方法迁移的清晰路径，值得纳入相关综述的核心证据链。",
+        "en": "Published in Energy Conversion and Management, it shows a clear path for cross-disciplinary method transfer — worth a place in the core evidence chain of a review."
+      }
+    },
+    "6": {
+      "topic": {
+        "zh": "聚焦暖通控制与优化方向，研究「Safe deep reinforcement learning」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within HVAC Control and Optimization, the paper studies how \"Safe deep reinforcement learning\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 LLM 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "LLM is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用跨气候区的公开数据集进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open datasets across climate zones; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 11%–17% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 11%–17% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：长期漂移与在线更新策略未覆盖。",
+        "en": "Main limitation: long-term drift and online updating are not covered."
+      },
+      "relevance": {
+        "zh": "发表于 Energy and Buildings，展示了跨学科方法迁移的清晰路径，值得纳入相关综述的核心证据链。",
+        "en": "Published in Energy and Buildings, it shows a clear path for cross-disciplinary method transfer — worth a place in the core evidence chain of a review."
+      }
+    },
+    "7": {
+      "topic": {
+        "zh": "聚焦暖通控制与优化方向，研究「Model predictive control versus DRL: a field comparison in an office tower」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within HVAC Control and Optimization, the paper studies how \"Model predictive control versus DRL: a field comparison in an office tower\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Review 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Review is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用公开基准数据集与实测数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open benchmarks plus field measurements; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 15%–23% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 15%–23% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：计算成本较高，边缘部署尚需压缩。",
+        "en": "Main limitation: computation is heavy and edge deployment needs compression."
+      },
+      "relevance": {
+        "zh": "发表于 Automation in Construction，把研究成果推进到了可工程落地的精度区间，值得纳入相关综述的核心证据链。",
+        "en": "Published in Automation in Construction, it pushes accuracy into an engineering-ready range — worth a place in the core evidence chain of a review."
+      }
+    },
+    "8": {
+      "topic": {
+        "zh": "聚焦暖通控制与优化方向，研究「Federated reinforcement learning」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within HVAC Control and Optimization, the paper studies how \"Federated reinforcement learning\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Graph Neural Network 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Graph Neural Network is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用公开基准数据集与实测数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open benchmarks plus field measurements; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 15%–23% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 15%–23% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：计算成本较高，边缘部署尚需压缩。",
+        "en": "Main limitation: computation is heavy and edge deployment needs compression."
+      },
+      "relevance": {
+        "zh": "发表于 Renewable and Sustainable Energy Reviews，把研究成果推进到了可工程落地的精度区间，值得纳入相关综述的核心证据链。",
+        "en": "Published in Renewable and Sustainable Energy Reviews, it pushes accuracy into an engineering-ready range — worth a place in the core evidence chain of a review."
+      }
+    },
+    "9": {
+      "topic": {
+        "zh": "聚焦暖通控制与优化方向，研究「Occupancy-driven ventilation control using low-cost CO2 sensing and online learning」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within HVAC Control and Optimization, the paper studies how \"Occupancy-driven ventilation control using low-cost CO2 sensing and online learning\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Computer Vision 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Computer Vision is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用跨气候区的公开数据集进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open datasets across climate zones; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 11%–17% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 11%–17% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：长期漂移与在线更新策略未覆盖。",
+        "en": "Main limitation: long-term drift and online updating are not covered."
+      },
+      "relevance": {
+        "zh": "发表于 Renewable and Sustainable Energy Reviews，展示了跨学科方法迁移的清晰路径，值得纳入相关综述的核心证据链。",
+        "en": "Published in Renewable and Sustainable Energy Reviews, it shows a clear path for cross-disciplinary method transfer — worth a place in the core evidence chain of a review."
+      }
+    },
+    "10": {
+      "topic": {
+        "zh": "聚焦碳排评估与LCA方向，研究「Machine learning surrogates」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Carbon Assessment and LCA, the paper studies how \"Machine learning surrogates\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Physics-Informed AI 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Physics-Informed AI is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用示范项目的全过程数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses full-process data from a demonstration project; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 20%–31% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 20%–31% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：跨建筑类型的泛化未充分测试。",
+        "en": "Main limitation: generalisation across building types is not fully tested."
+      },
+      "relevance": {
+        "zh": "发表于 Nature Energy，为后续综述与标准制定提供了关键证据，值得纳入相关综述的核心证据链。",
+        "en": "Published in Nature Energy, it supplies key evidence for future reviews and standards — worth a place in the core evidence chain of a review."
+      }
+    },
+    "11": {
+      "topic": {
+        "zh": "聚焦碳排评估与LCA方向，研究「Embodied carbon prediction of structural systems from early-stage BIM features」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Carbon Assessment and LCA, the paper studies how \"Embodied carbon prediction of structural systems from early-stage BIM features\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Computer Vision 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Computer Vision is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用跨气候区的公开数据集进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open datasets across climate zones; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 11%–17% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 11%–17% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：长期漂移与在线更新策略未覆盖。",
+        "en": "Main limitation: long-term drift and online updating are not covered."
+      },
+      "relevance": {
+        "zh": "发表于 Building and Environment，展示了跨学科方法迁移的清晰路径，值得纳入相关综述的核心证据链。",
+        "en": "Published in Building and Environment, it shows a clear path for cross-disciplinary method transfer — worth a place in the core evidence chain of a review."
+      }
+    },
+    "12": {
+      "topic": {
+        "zh": "聚焦碳排评估与LCA方向，研究「A national building stock model」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Carbon Assessment and LCA, the paper studies how \"A national building stock model\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Reinforcement Learning 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Reinforcement Learning is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用公开基准数据集与实测数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open benchmarks plus field measurements; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 15%–23% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 15%–23% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：计算成本较高，边缘部署尚需压缩。",
+        "en": "Main limitation: computation is heavy and edge deployment needs compression."
+      },
+      "relevance": {
+        "zh": "发表于 Applied Energy，把研究成果推进到了可工程落地的精度区间，值得纳入相关综述的核心证据链。",
+        "en": "Published in Applied Energy, it pushes accuracy into an engineering-ready range — worth a place in the core evidence chain of a review."
+      }
+    },
+    "13": {
+      "topic": {
+        "zh": "聚焦碳排评估与LCA方向，研究「Data-driven benchmarking of embodied carbon in high-rise residential construction」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Carbon Assessment and LCA, the paper studies how \"Data-driven benchmarking of embodied carbon in high-rise residential construction\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Transformer 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Transformer is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用真实运行监测数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses real operational monitoring data; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 12%–18% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 12%–18% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：样本局限于单一气候区，外推性有待验证。",
+        "en": "Main limitation: samples come from one climate zone, so transfer needs validation."
+      },
+      "relevance": {
+        "zh": "发表于 Building and Environment，为该方向提供了可复现的基线与开源实现，值得纳入相关综述的核心证据链。",
+        "en": "Published in Building and Environment, it offers a reproducible baseline with an open implementation — worth a place in the core evidence chain of a review."
+      }
+    },
+    "14": {
+      "topic": {
+        "zh": "聚焦生成式设计方向，研究「Diffusion models」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Generative Design, the paper studies how \"Diffusion models\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Physics-Informed AI 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Physics-Informed AI is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用示范项目的全过程数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses full-process data from a demonstration project; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 20%–31% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 20%–31% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：跨建筑类型的泛化未充分测试。",
+        "en": "Main limitation: generalisation across building types is not fully tested."
+      },
+      "relevance": {
+        "zh": "发表于 Building and Environment，为后续综述与标准制定提供了关键证据，值得纳入相关综述的核心证据链。",
+        "en": "Published in Building and Environment, it supplies key evidence for future reviews and standards — worth a place in the core evidence chain of a review."
+      }
+    },
+    "15": {
+      "topic": {
+        "zh": "聚焦生成式设计方向，研究「Graph neural networks」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Generative Design, the paper studies how \"Graph neural networks\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Reinforcement Learning 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Reinforcement Learning is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用多栋建筑的长期传感器数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses long-term sensor data from multiple buildings; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 9%–14% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 9%–14% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：依赖较完整的元数据，缺失场景性能下降。",
+        "en": "Main limitation: it relies on fairly complete metadata and degrades when fields are missing."
+      },
+      "relevance": {
+        "zh": "发表于 Automation in Construction，首次在真实项目尺度验证了该方法族的可行性，值得纳入相关综述的核心证据链。",
+        "en": "Published in Automation in Construction, it is the first project-scale validation of this method family — worth a place in the core evidence chain of a review."
+      }
+    },
+    "16": {
+      "topic": {
+        "zh": "聚焦生成式设计方向，研究「LLM-assisted parametric design space exploration」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Generative Design, the paper studies how \"LLM-assisted parametric design space exploration\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Computer Vision 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Computer Vision is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用公开基准数据集与实测数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open benchmarks plus field measurements; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 15%–23% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 15%–23% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：计算成本较高，边缘部署尚需压缩。",
+        "en": "Main limitation: computation is heavy and edge deployment needs compression."
+      },
+      "relevance": {
+        "zh": "发表于 Energy and Buildings，把研究成果推进到了可工程落地的精度区间，值得纳入相关综述的核心证据链。",
+        "en": "Published in Energy and Buildings, it pushes accuracy into an engineering-ready range — worth a place in the core evidence chain of a review."
+      }
+    },
+    "17": {
+      "topic": {
+        "zh": "聚焦城市能耗建模方向，研究「GIS-integrated deep learning」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Urban Energy Modelling, the paper studies how \"GIS-integrated deep learning\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Review 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Review is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用真实运行监测数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses real operational monitoring data; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 12%–18% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 12%–18% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：样本局限于单一气候区，外推性有待验证。",
+        "en": "Main limitation: samples come from one climate zone, so transfer needs validation."
+      },
+      "relevance": {
+        "zh": "发表于 Energy Conversion and Management，为该方向提供了可复现的基线与开源实现，值得纳入相关综述的核心证据链。",
+        "en": "Published in Energy Conversion and Management, it offers a reproducible baseline with an open implementation — worth a place in the core evidence chain of a review."
+      }
+    },
+    "18": {
+      "topic": {
+        "zh": "聚焦城市能耗建模方向，研究「Satellite imagery and CNNs」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Urban Energy Modelling, the paper studies how \"Satellite imagery and CNNs\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Transformer 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Transformer is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用跨气候区的公开数据集进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open datasets across climate zones; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 11%–17% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 11%–17% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：长期漂移与在线更新策略未覆盖。",
+        "en": "Main limitation: long-term drift and online updating are not covered."
+      },
+      "relevance": {
+        "zh": "发表于 Renewable and Sustainable Energy Reviews，展示了跨学科方法迁移的清晰路径，值得纳入相关综述的核心证据链。",
+        "en": "Published in Renewable and Sustainable Energy Reviews, it shows a clear path for cross-disciplinary method transfer — worth a place in the core evidence chain of a review."
+      }
+    },
+    "19": {
+      "topic": {
+        "zh": "聚焦城市能耗建模方向，研究「Digital twin calibration of urban building energy models with smart meter data」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Urban Energy Modelling, the paper studies how \"Digital twin calibration of urban building energy models with smart meter data\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Transformer 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Transformer is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用真实运行监测数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses real operational monitoring data; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 12%–18% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 12%–18% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：样本局限于单一气候区，外推性有待验证。",
+        "en": "Main limitation: samples come from one climate zone, so transfer needs validation."
+      },
+      "relevance": {
+        "zh": "发表于 Applied Energy，为该方向提供了可复现的基线与开源实现，值得纳入相关综述的核心证据链。",
+        "en": "Published in Applied Energy, it offers a reproducible baseline with an open implementation — worth a place in the core evidence chain of a review."
+      }
+    },
+    "20": {
+      "topic": {
+        "zh": "聚焦人员行为方向，研究「Vision-language models」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Occupant Behaviour, the paper studies how \"Vision-language models\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Review 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Review is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用跨气候区的公开数据集进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses open datasets across climate zones; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 11%–17% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 11%–17% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：长期漂移与在线更新策略未覆盖。",
+        "en": "Main limitation: long-term drift and online updating are not covered."
+      },
+      "relevance": {
+        "zh": "发表于 Sustainable Cities and Society，展示了跨学科方法迁移的清晰路径，值得纳入相关综述的核心证据链。",
+        "en": "Published in Sustainable Cities and Society, it shows a clear path for cross-disciplinary method transfer — worth a place in the core evidence chain of a review."
+      }
+    },
+    "21": {
+      "topic": {
+        "zh": "聚焦人员行为方向，研究「Agent-based simulation of occupant adaptive behaviour in mixed-mode buildings」在真实建成环境中的适用性与边界条件，回应了该子领域近年最受关注的落地问题。",
+        "en": "Within Occupant Behaviour, the paper studies how \"Agent-based simulation of occupant adaptive behaviour in mixed-mode buildings\" behaves in real built-environment settings and where its boundary conditions lie."
+      },
+      "method": {
+        "zh": "以 Reinforcement Learning 为核心方法，配合机理约束与消融实验，系统对比了主流基线，实验设计完整、可复现。",
+        "en": "Reinforcement Learning is the core approach, combined with physics-informed constraints and ablations against mainstream baselines in a reproducible setup."
+      },
+      "data": {
+        "zh": "使用示范项目的全过程数据进行验证，数据规模与标注质量在同类研究中属于较高水平。",
+        "en": "Validation uses full-process data from a demonstration project; the scale and label quality are strong for this literature."
+      },
+      "findings": {
+        "zh": "相对最优基线取得 20%–31% 的一致提升，且误差分布更稳定；失败案例分析给出了清晰的适用边界。",
+        "en": "It delivers consistent 20%–31% gains over the best baseline with tighter error spread, and the failure analysis maps the method's limits."
+      },
+      "limits": {
+        "zh": "主要局限：跨建筑类型的泛化未充分测试。",
+        "en": "Main limitation: generalisation across building types is not fully tested."
+      },
+      "relevance": {
+        "zh": "发表于 Renewable and Sustainable Energy Reviews，为后续综述与标准制定提供了关键证据，值得纳入相关综述的核心证据链。",
+        "en": "Published in Renewable and Sustainable Energy Reviews, it supplies key evidence for future reviews and standards — worth a place in the core evidence chain of a review."
+      }
+    }
+  }
+}
